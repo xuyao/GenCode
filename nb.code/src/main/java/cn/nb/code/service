@@ -1,0 +1,45 @@
+package $thisPackage;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import $daoClass;
+import $modelClass;
+
+@Service
+public class $thisClassName {
+
+	@Autowired
+	private $daoName $daoObj;
+	
+	public boolean exit$modelName($modelName $modelObj){
+		Integer result = $daoObj.count($modelObj);
+		if(result==0)
+			return false;
+		else
+			return true;
+	}
+	
+	public List<$modelName> list($modelName $modelObj){
+		return $daoObj.search($modelObj);
+	}
+	
+	public Integer count($modelName $modelObj){
+		return $daoObj.count($modelObj);
+	}
+	
+	public void save($modelName $modelObj){
+		$daoObj.save($modelObj);
+	}
+	
+	public void update($modelName $modelObj){
+		$daoObj.update($modelObj);
+	}
+	
+	public void delete($modelName $modelObj){
+		$daoObj.delete($modelObj);
+	}
+	
+}

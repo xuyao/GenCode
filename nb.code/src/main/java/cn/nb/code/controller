@@ -1,0 +1,42 @@
+package $thisPackage;
+
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import $modelClass;
+import $serviceClass;
+import cn.nb.base.http.HttpResponse;
+import cn.nb.base.http.ListResponse;
+import cn.nb.base.http.Page;
+import cn.nb.util.JsonUtil;
+import cn.nb.base.http.BaseController;
+
+/**
+ * 	@author xuyao
+ * */
+@Controller
+@RequestMapping("/fw/$modelObj")
+public class $modelNameController extends BaseController{
+	
+	@Autowired
+	private $serviceName $serviceObj;
+	
+	@RequestMapping(value = "/list", method = RequestMethod.GET)
+	public void list(Page page, HttpServletRequest request, HttpServletResponse response) {
+		ListResponse<$modelName> ares = new ListResponse<$modelName>();
+		$modelName $modelObj = new $modelName();
+		List<$modelName> list = $serviceObj.list($modelObj);
+		ares.setRows(list);
+		ares.setTotal(1);
+		HttpResponse.responseContentTypeJson(response, JsonUtil.getJsonString4JavaPOJO(ares));
+	}
+
+	
+}

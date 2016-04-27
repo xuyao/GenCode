@@ -1,0 +1,21 @@
+package $thisPackage;
+
+import java.util.List;
+
+import $modelClass;
+import cn.nb.base.annotation.MybatisMapper;
+
+@MybatisMapper
+public interface $thisClassName {
+
+	public Integer count($modelName $modelObj);
+	
+	public List<$modelName> search($modelName $modelObj);
+	
+	public void save($modelName $modelObj);
+	
+	public void update($modelName $modelObj);
+	
+	public void delete($modelName $modelObj);
+	
+}
