@@ -13,23 +13,26 @@ import org.dom4j.io.SAXReader;
 
 public class XmlTypeAliasUtil {
 
-	public static String genResultMap(Field[] field){
+	public static String genResultMap(List<String> list){
 		StringBuilder sb = new StringBuilder();
-		for(int i=0; i<field.length; i++){
-			if(field[i].getAnnotation(Id.class)!=null){
+		for(String s : list){
+			String[] arr = s.split(",");
+			if(arr.length<3)
+				System.err.println("XmlTypeAliasUtil========");
+			if("ID".equals(arr[2])){
 				//<id property="adminId" column="admin_id" />
 				sb.append("<id property=\"");
-				sb.append(field[i].getName());
+				sb.append(arr[0]);
 				sb.append("\" column=\"");
-				sb.append(field[i].getName().toLowerCase());
+				sb.append(arr[0].toLowerCase());
 				sb.append("\" />");
 				sb.append("\n\t\t");
 			}else{
 				//<result property="name" column="name" />
 				sb.append("<result property=\"");
-				sb.append(field[i].getName());
+				sb.append(arr[0]);
 				sb.append("\" column=\"");
-				sb.append(field[i].getName().toLowerCase());
+				sb.append(arr[0].toLowerCase());
 				sb.append("\" />");
 				sb.append("\n\t\t");
 			}

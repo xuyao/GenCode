@@ -45,16 +45,24 @@ public class DBUtil {
                 String tableName = rs.getString(3).toLowerCase();
 //                System.out.println(tableName);
                 to.setTableName(tableName);//设置表名
-                // 根据表名提前表里面信息：  
+                // 根据表名提前表里面信息:
+                ResultSet colID = dbMetData.getColumns(null, "%", tableName, "%ID");
+                colID.next();
+                String IDName = colID.getString("COLUMN_NAME");  
+                String IDType = colID.getString("TYPE_NAME");
+                columnslist.add(IDName+","+changeDbType(IDType)+",ID");
+                
                 ResultSet colRet = dbMetData.getColumns(null, "%", tableName, "%");  
                 while (colRet.next()) {
                     String columnName = colRet.getString("COLUMN_NAME");  
                     String columnType = colRet.getString("TYPE_NAME");
+                	if(IDName.equals(columnName))
+                		continue;
 //                    int datasize = colRet.getInt("COLUMN_SIZE");
 //                    int digits = colRet.getInt("DECIMAL_DIGITS"); 
 //                    int nullable = colRet.getInt("NULLABLE");
 //                    System.out.println(columnName + " " + changeDbType(columnType));
-                    columnslist.add(columnName+","+changeDbType(columnType));
+                    columnslist.add(columnName+","+changeDbType(columnType)+",C");
                 }
                 to.setList(columnslist);
                 tableList.add(to);
