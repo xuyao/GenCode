@@ -5,6 +5,32 @@ import java.io.File;
 public class PackageUtil {
 
 	
+	public static String getPackage(){
+		return PropertiesUtil.get("package");
+	}
+	
+	public static String getModelClassName(String tableName){
+		String[] arr = tableName.split("_");
+		return arr[arr.length-1];
+	}
+	
+	public static String getModelClass(String modelClassName){
+		return getPackage()+".model."+modelClassName;
+	}
+	
+	public static String getDaoClass(String modelClassName){
+		return getPackage()+".dao."+modelClassName+"Dao";
+	}
+	
+	public static String getServiceClass(String modelClassName){
+		return getPackage()+".service."+modelClassName+"Service";
+	}
+	
+	public static String getControllerClass(String modelClassName){
+		return getPackage()+".controller."+modelClassName+"Controller";
+	}
+	
+	
 	//得到model类名
 	public static String getClassName(String classPath){
 		String[] str = classPath.split("\\.");
@@ -17,15 +43,6 @@ public class PackageUtil {
 		String modelClassName = getClassName(modelClass);
 		String packageClass = modelClassName + CharUpDownUtil.toUpperCaseFirstOne(type);
 		return packageClass;
-	}
-	
-	
-	//得到包路径
-	public static String getPackage(String modelClass, String type){
-		modelClass = modelClass.substring(0, modelClass.lastIndexOf("."));
-		String daoPackage = modelClass.substring(0, modelClass.lastIndexOf("."))
-				+"."+type;
-		return daoPackage;
 	}
 	
 	
@@ -44,7 +61,7 @@ public class PackageUtil {
 		File f = new File(pathFile);
 		if(!f.exists()){
 			try {
-				f.mkdir();
+				f.mkdirs();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

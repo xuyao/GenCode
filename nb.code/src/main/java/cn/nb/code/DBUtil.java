@@ -12,23 +12,19 @@ import java.util.List;
 
 public class DBUtil {
 
-	public static List<String> getDBColumnList() throws Exception {  
+	public List<TableObj> getDBColumnList() throws Exception {  
 		
-        String driver = "com.mysql.jdbc.Driver";  
-        String url = "jdbc:mysql://218.241.108.40:3306/nbdb?noAccessToProcedureBodies=true&useUnicode=true&characterEncoding=UTF-8";  
-        String user = "museum";  
-        String password = "museum123456";  
+        String driver = PropertiesUtil.get("jdbc.driver");  
+        String url = PropertiesUtil.get("jdbc.url");  
+        String user = PropertiesUtil.get("jdbc.user");  
+        String password = PropertiesUtil.get("jdbc.password");  
 
         Class.forName(driver);  
         Connection conn = DriverManager.getConnection(url, user, password);  
-        if (!conn.isClosed())  
-            System.out.println("Succeeded connecting to the Database!");  
-        else  
-            System.err.println("connect filed");  
         // 获取所有表名  
         Statement statement = conn.createStatement();  
   
-        List<String> list = getTables(conn);  
+        List<TableObj> list = getTables(conn);  
   
         statement.close();  
         conn.close();  
@@ -36,15 +32,19 @@ public class DBUtil {
         return list;
     }  
   
-    private static List<String> getTables(Connection conn) throws SQLException {
-    	List<String> list = new ArrayList<String>();
+    private List<TableObj> getTables(Connection conn) throws SQLException {
+    	List<TableObj> tableList = new ArrayList<TableObj>();
+    	
         DatabaseMetaData dbMetData = conn.getMetaData();  
         ResultSet rs = dbMetData.getTables(null, "mysql", null, new String[] { "TABLE"});  
   
         while (rs.next()) {
-            if (rs.getString(4) != null && rs.getString(4).equalsIgnoreCase("TABLE")) {  
-                String tableName = rs.getString(3).toLowerCase();  
-                System.out.println(tableName);  
+            if (rs.getString(4) != null && rs.getString(4).equalsIgnoreCase("TABLE")) {
+            	TableObj to = new TableObj();
+            	List<String> columnslist = new ArrayList<String>();
+                String tableName = rs.getString(3).toLowerCase();
+//                System.out.println(tableName);
+                to.setTableName(tableName);//设置表名
                 // 根据表名提前表里面信息：  
                 ResultSet colRet = dbMetData.getColumns(null, "%", tableName, "%");  
                 while (colRet.next()) {
@@ -53,31 +53,35 @@ public class DBUtil {
 //                    int datasize = colRet.getInt("COLUMN_SIZE");
 //                    int digits = colRet.getInt("DECIMAL_DIGITS"); 
 //                    int nullable = colRet.getInt("NULLABLE");
-                    System.out.println(columnName + " " + columnType);
-                    list.add(columnName+","+changeDbType(columnType));
+//                    System.out.println(columnName + " " + changeDbType(columnType));
+                    columnslist.add(columnName+","+changeDbType(columnType));
                 }
+                to.setList(columnslist);
+                tableList.add(to);
             }
         }
         rs.close();
-        return list;
+        return tableList;
     }
     
     
-    private static String changeDbType(String column){
+    private String changeDbType(String column){
     	if(column.equalsIgnoreCase("varchar"))
     		return "String";
     	if(column.equalsIgnoreCase("varchar2"))
     		return "String";
+    	if(column.equalsIgnoreCase("text"))
+    		return "String";
     	if(column.equalsIgnoreCase("int"))
     		return "Integer";
     	if(column.equalsIgnoreCase("long"))
-    		return "Integer";
+    		return "Long";
     	if(column.equalsIgnoreCase("tinyint"))
     		return "Integer";
     	if(column.equalsIgnoreCase("datetime"))
     		return "java.util.Date";
     	if(column.equalsIgnoreCase("char"))
-    		return "char";
+    		return "String";
     	if(column.equalsIgnoreCase("boolean"))
     		return "boolean";
     	return "String";
