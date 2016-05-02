@@ -12,7 +12,7 @@ public class App {
 				
 				String modelClassName = CharUpDownUtil.
 					toUpperCaseFirstOne(PackageUtil.getModelClassName(obj.getTableName()));
-//				CodeUtil.genModelClass(modelClassName);//生成dao
+				code.genModelClass(modelClassName, obj.getList());//生成dao
 				code.genDaoClass(modelClassName);//生成dao
 				code.genServiceClass(modelClassName);//生成service
 				code.genControllerClass(modelClassName);//生成controller

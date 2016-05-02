@@ -1,0 +1,9 @@
+package $thisPackage;
+
+public class $modelName {
+
+	$param
+	
+	$method
+	
+}

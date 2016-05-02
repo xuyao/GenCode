@@ -1,15 +1,41 @@
 package cn.nb.code;
 
 import java.io.File;
-import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.dom4j.Document;
+import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
 
 public class CodeUtil {
 
-	public void genModelClass(){
+	public void genModelClass(String modelClassName, List<String> list){
+		String pkg = PropertiesUtil.get("package");
+		String pathFile = PropertiesUtil.get("java_outpath");
+		String path = (pathFile + pkg + ".model").replaceAll("\\.", "\\\\");
 		
+		System.out.println(path);
+		
+		PackageUtil.ifPackageNotExistCreate(path);
+		
+		System.out.println(path+ File.separator+ modelClassName + ".java");
+		File file = new File(path+ File.separator+ modelClassName + ".java");
+		try {
+			file.createNewFile();
+			String content = FileUtils.readFileToString(
+					new File(CodeUtil.class.getResource("/vm").getFile() + "/model"));
+			content = content.replaceAll("\\$thisPackage", PackageUtil.getPackage()+".model");
+			content = content.replaceAll("\\$modelName", modelClassName);
+			content = content.replaceAll("\\$param", genParam(list));
+			content = content.replaceAll("\\$method", genMethod(list));
+			
+			FileUtils.writeStringToFile(file, content);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		
 	}
 	
@@ -120,13 +146,86 @@ public class CodeUtil {
 		content = content.replaceAll("\\$daoClass", PackageUtil.getDaoClass(modelClassName));
 		content = content.replaceAll("\\$modelName", modelClassName);
 		content = content.replaceAll("\\$modelObj", modelClassName.toLowerCase());
-		content = content.replaceAll("\\$resultMap", XmlTypeAliasUtil.genResultMap(list));
+		content = content.replaceAll("\\$resultMap", genResultMap(list));
 		
 		FileUtils.writeStringToFile(xmlFile, content);
 		} catch(Exception e){
 			e.printStackTrace();
 		}
-		
+	}
+	
+	
+	private String genResultMap(List<String> list){
+		StringBuilder sb = new StringBuilder();
+		for(String s : list){
+			String[] arr = s.split(",");
+			if(arr.length<3)
+				System.err.println("XmlTypeAliasUtil========");
+			if("ID".equals(arr[2])){
+				//<id property="adminId" column="admin_id" />
+				sb.append("<id property=\"");
+				sb.append(arr[0]);
+				sb.append("\" column=\"");
+				sb.append(arr[0].toLowerCase());
+				sb.append("\" />");
+				sb.append("\n\t\t");
+			}else{
+				//<result property="name" column="name" />
+				sb.append("<result property=\"");
+				sb.append(arr[0]);
+				sb.append("\" column=\"");
+				sb.append(arr[0].toLowerCase());
+				sb.append("\" />");
+				sb.append("\n\t\t");
+			}
+		}
+		return sb.toString();
+	}
+	
+	private List<String> getTypeAlias(File file){
+		List<String> list = new ArrayList<String>();
+		try{
+			SAXReader reader = new SAXReader();  
+			Document document = reader.read(file);  
+			Element root = document.getRootElement();
+			Element eta = root.element("typeAliases");
+			Iterator it= eta.elements("typeAlias").iterator();  
+	        while(it.hasNext()){
+	        	Element elm=(Element)it.next();
+	        	list.add(elm.attributeValue("type"));
+	        }
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return list;
+	}
+	
+	
+	private String genParam(List<String> list){
+		StringBuilder sb = new StringBuilder();
+		for(String s : list){
+			String[] arr = s.split(",");
+			sb.append("\n\t").append("private ").append(arr[1]).append(" ").append(arr[0])
+			.append(";");
+		}
+		return sb.toString();
+	}
+	
+	
+	private String genMethod(List<String> list){
+		StringBuilder sb = new StringBuilder();
+		for(String s : list){
+			String[] arr = s.split(",");
+			sb.append("\n\t").append("public void set").append(CharUpDownUtil.toUpperCaseFirstOne(arr[0]))
+			.append("(").append(arr[1]).append(" ").append(arr[0]).append(")").append(" ")
+			.append("{").append("\n\t\t").append("this.").append(arr[0]).append(" = ")
+			.append(arr[0]).append(";").append("\n\t").append("}");
+			sb.append("\n\t").append("public ").append(arr[1]).append(" get")
+			.append(CharUpDownUtil.toUpperCaseFirstOne(arr[0])).append("() {").append("\n\t\t")
+			.append("return ").append(arr[0]).append(";").append("\n\t").append("}");
+		}
+		return sb.toString();
 	}
 	
 }
