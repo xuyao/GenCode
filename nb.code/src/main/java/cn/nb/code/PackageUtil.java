@@ -9,9 +9,17 @@ public class PackageUtil {
 		return PropertiesUtil.get("package");
 	}
 	
+	
+	public static String getCutTableName(String tableName){
+		String cutTableName = tableName.substring(tableName.indexOf("_")+1);
+		return cutTableName;
+	}
+	
+	
 	public static String getModelClassName(String tableName){
-		String[] arr = tableName.split("_");
-		return arr[arr.length-1];
+		String modelClassName = tableName.substring(tableName.indexOf("_")+1);
+		modelClassName = modelClassName.replaceAll("_", "");
+		return modelClassName;
 	}
 	
 	public static String getModelClass(String modelClassName){

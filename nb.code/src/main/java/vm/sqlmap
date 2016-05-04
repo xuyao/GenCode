@@ -38,4 +38,21 @@
     	where 1=1 
 		<include refid="common_search_sql"/>
     </select>
+    
+    <delete id="delete" parameterType="Integer">
+    	delete from imc_contribute
+    	where id=#{id}
+    </delete>
+    
+    <insert id="add" parameterType="Contribute" useGeneratedKeys="true" keyProperty="id">
+    	insert into t_$modelObj(title,intro,pic,content,sort,html_path,status,exptime,ctime,utime) 
+    	values(#{title},#{intro},#{pic},#{content},#{sort},#{html_path},#{status},#{exptime},now(),now())
+    </insert>
+    
+    <update id="update" parameterType="Contribute">
+    	update t_$modelObj set intro=#{intro},pic=#{pic},title=#{title},sort=#{sort},
+    	content=#{content},html_path=#{html_path},utime=now(),status=#{status},exptime=#{exptime}
+    	where id=#{id}
+    </update>
+    
 </mapper>  
