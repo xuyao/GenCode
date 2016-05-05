@@ -147,11 +147,47 @@ public class CodeUtil {
 		content = content.replaceAll("\\$modelName", modelClassName);
 		content = content.replaceAll("\\$modelObj", modelClassName.toLowerCase());
 		content = content.replaceAll("\\$resultMap", genResultMap(list));
+		content = content.replaceAll("\\$searchcondition", genSearchCondition(list));
+		
+		StringBuilder addColumn = new StringBuilder();
+		StringBuilder addValue = new StringBuilder();
+		StringBuilder updateColumn = new StringBuilder();
+		StringBuilder searchSelect = new StringBuilder();
+		for(String s : list){
+			String[] arr = s.split(",");
+			if(!"ID".equals(arr[2])){//如果不是id
+				addColumn.append(arr[0].toLowerCase()).append(",");
+				addValue.append("#{").append(arr[0].toLowerCase()).append("},");
+				updateColumn.append(arr[0].toLowerCase()).append("=#{").
+						append(arr[0].toLowerCase()).append("},");
+			}
+			searchSelect.append("t.").append(arr[0]).append(",");
+		}
+		addColumn.deleteCharAt(addColumn.length()-1);
+		addValue.deleteCharAt(addValue.length()-1);
+		updateColumn.deleteCharAt(updateColumn.length()-1);
+		searchSelect.deleteCharAt(searchSelect.length()-1);
+		content = content.replaceAll("\\$searchSelect", searchSelect.toString());
+		content = content.replaceAll("\\$addColumn", addColumn.toString());
+		content = content.replaceAll("\\$addValue", addValue.toString());
+		content = content.replaceAll("\\$updateColumn", updateColumn.toString());
 		
 		FileUtils.writeStringToFile(xmlFile, content);
 		} catch(Exception e){
 			e.printStackTrace();
 		}
+	}
+	
+	
+	private String genSearchCondition(List<String> list){
+		StringBuilder sb = new StringBuilder();
+		for(String s : list){
+			String[] arr = s.split(",");
+			sb.append("<if test=\"").append(arr[0]).append(" != null and ")
+			.append(arr[0]).append(" != ''\">").append("\n\t\t").append("and t.").append(arr[0])
+			.append("=#{").append(arr[0]).append("}").append("\n\t").append("</if>").append("\n\t");
+		}
+		return sb.toString();
 	}
 	
 	
@@ -162,7 +198,6 @@ public class CodeUtil {
 			if(arr.length<3)
 				System.err.println("XmlTypeAliasUtil========");
 			if("ID".equals(arr[2])){
-				//<id property="adminId" column="admin_id" />
 				sb.append("<id property=\"");
 				sb.append(arr[0]);
 				sb.append("\" column=\"");
@@ -170,7 +205,6 @@ public class CodeUtil {
 				sb.append("\" />");
 				sb.append("\n\t\t");
 			}else{
-				//<result property="name" column="name" />
 				sb.append("<result property=\"");
 				sb.append(arr[0]);
 				sb.append("\" column=\"");
@@ -179,8 +213,10 @@ public class CodeUtil {
 				sb.append("\n\t\t");
 			}
 		}
+		sb.deleteCharAt(sb.length()-1);//delete last \t
 		return sb.toString();
 	}
+	
 	
 	private List<String> getTypeAlias(File file){
 		List<String> list = new ArrayList<String>();

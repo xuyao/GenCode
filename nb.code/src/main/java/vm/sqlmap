@@ -4,26 +4,14 @@
 <mapper namespace="$daoClass">
     
     <resultMap type="$modelName" id="$modelObjMap">
-    	$resultMap
-    	<!--
-		<id property="adminId" column="admin_id" />
-		<result property="name" column="name" />
-		<result property="password" column="password" />
-		-->
-	</resultMap>
+    	$resultMap</resultMap>
 	
-	<!--common searchcondtion sql -->
+	<!--common searchcondition sql -->
     <sql id="common_search_sql">
-      <if test="name != null and name != ''">
-        and t.name=#{name}
-      </if>
-      <if test="password != null and password != ''">
-        and t.password=#{password}
-      </if>
-    </sql>
+    $searchcondition</sql>
     
     <sql id="common_select_sql">
-      select t.* from t_$modelObj t
+      select $searchSelect from t_$modelObj t
     </sql>
     
     <select id="count" parameterType="$modelName" resultType="int">
@@ -40,19 +28,18 @@
     </select>
     
     <delete id="delete" parameterType="Integer">
-    	delete from imc_contribute
+    	delete from t_$modelObj
     	where id=#{id}
     </delete>
     
-    <insert id="add" parameterType="Contribute" useGeneratedKeys="true" keyProperty="id">
-    	insert into t_$modelObj(title,intro,pic,content,sort,html_path,status,exptime,ctime,utime) 
-    	values(#{title},#{intro},#{pic},#{content},#{sort},#{html_path},#{status},#{exptime},now(),now())
+    <insert id="add" parameterType="$modelName" useGeneratedKeys="true" keyProperty="id">
+        insert into t_$modelObj($addColumn) 
+    	values($addValue)
     </insert>
     
-    <update id="update" parameterType="Contribute">
-    	update t_$modelObj set intro=#{intro},pic=#{pic},title=#{title},sort=#{sort},
-    	content=#{content},html_path=#{html_path},utime=now(),status=#{status},exptime=#{exptime}
-    	where id=#{id}
+    <update id="update" parameterType="$modelName">
+        update t_$modelObj set $updateColumn 
+        where id=#{id}
     </update>
     
 </mapper>  

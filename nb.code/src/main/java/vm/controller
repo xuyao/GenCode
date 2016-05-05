@@ -14,6 +14,7 @@ import $modelClass;
 import $serviceClass;
 import cn.nb.base.http.HttpResponse;
 import cn.nb.base.http.ListResponse;
+import cn.nb.base.http.Status;
 import cn.nb.base.http.Page;
 import cn.nb.util.JsonUtil;
 import cn.nb.base.http.BaseController;
@@ -37,6 +38,35 @@ public class $modelNameController extends BaseController{
 		ares.setTotal(1);
 		HttpResponse.responseContentTypeJson(response, JsonUtil.getJsonString4JavaPOJO(ares));
 	}
+	
+	
+	@RequestMapping(value = "/add", method = RequestMethod.POST)
+	public void add($modelName $modelObj, HttpServletRequest request, HttpServletResponse response) {
+		BaseResponse<$modelName> res = new BaseResponse<$modelName>();
+		$serviceObj.add($modelObj);
+		res.setStatus(new Status(ApiCode.CODE_SUCCESS, ApiCode.MSG_SUCCESS));
+		HttpResponse.responseContentTypeJson(response, JsonUtil.getJsonString4JavaPOJO(res));
+	}
 
+
+	@RequestMapping(value = "/delete", method = RequestMethod.POST)
+	public void delete(HttpServletRequest request, HttpServletResponse response) {
+		BaseResponse res = new BaseResponse();
+		String _id = request.getParameter("_id");
+		$serviceObj.delete(_id);
+		res.setStatus(new Status(ApiCode.CODE_SUCCESS, ApiCode.MSG_SUCCESS));
+		HttpResponse.responseContentTypeJson(response, JsonUtil.getJsonString4JavaPOJO(res));
+	}
+	
+	
+	@RequestMapping(value = "/update", method = RequestMethod.POST)
+	public void update($modelName $modelObj, HttpServletRequest request, HttpServletResponse response) {
+		BaseResponse res = new BaseResponse();
+		String _id = request.getParameter("_id");
+		//$modelObj.set_id(_id);
+		$serviceObj.update($modelObj);
+		res.setStatus(new Status(ApiCode.CODE_SUCCESS, ApiCode.MSG_SUCCESS));
+		HttpResponse.responseContentTypeJson(response, JsonUtil.getJsonString4JavaPOJO(res));
+	}
 	
 }
