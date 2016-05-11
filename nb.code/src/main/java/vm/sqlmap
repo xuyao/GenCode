@@ -25,6 +25,16 @@
 		<include refid="common_select_sql"/>
     	where 1=1 
 		<include refid="common_search_sql"/>
+		<if test="page == true">  
+		limit #{start},#{count}	
+      	</if>
+    </select>
+    
+    <select id="get" parameterType="$modelName" resultMap="$modelObjMap">
+		<include refid="common_select_sql"/>
+    	where 1=1 
+		<include refid="common_search_sql"/>
+		limit 1
     </select>
     
     <delete id="delete" parameterType="Integer">

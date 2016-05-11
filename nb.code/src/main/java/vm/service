@@ -42,4 +42,8 @@ public class $thisClassName {
 		$daoObj.delete($modelObj);
 	}
 	
+	public $modelName get($modelName $modelObj){
+		return $daoObj.get($modelObj);
+	}
+	
 }

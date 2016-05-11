@@ -3,7 +3,7 @@ package $thisPackage;
 import java.util.List;
 
 import $modelClass;
-import cn.nb.base.annotation.MybatisMapper;
+import $mybatis;
 
 @MybatisMapper
 public interface $thisClassName {
@@ -17,5 +17,7 @@ public interface $thisClassName {
 	public void update($modelName $modelObj);
 	
 	public void delete($modelName $modelObj);
+	
+	public $modelName get($modelName $modelObj);
 	
 }

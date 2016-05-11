@@ -60,6 +60,7 @@ public class CodeUtil {
 			content = content.replaceAll("\\$thisClassName", modelClassName+"Dao");
 			content = content.replaceAll("\\$modelName", modelClassName);
 			content = content.replaceAll("\\$modelObj", modelClassName.toLowerCase());
+			content = content.replaceAll("\\$mybatis", PropertiesUtil.get("mybatis"));
 			FileUtils.writeStringToFile(file, content);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -123,6 +124,7 @@ public class CodeUtil {
 			String serviceName = modelClassName+"Service";
 			content = content.replaceAll("\\$serviceName", serviceName);
 			content = content.replaceAll("\\$serviceObj", serviceName.toLowerCase());
+			content = content.replaceAll("\\$package", pkg);
 			FileUtils.writeStringToFile(file, content);
 		} catch (Exception e) {
 			e.printStackTrace();
