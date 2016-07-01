@@ -42,7 +42,7 @@
     	where id=#{id}
     </delete>
     
-    <insert id="add" parameterType="$modelName" useGeneratedKeys="true" keyProperty="id">
+    <insert id="save" parameterType="$modelName" useGeneratedKeys="true" keyProperty="id">
         insert into t_$modelObj($addColumn) 
     	values($addValue)
     </insert>

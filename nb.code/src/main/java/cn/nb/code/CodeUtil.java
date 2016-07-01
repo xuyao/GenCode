@@ -99,6 +99,40 @@ public class CodeUtil {
 	}
 	
 	
+	public void genRestControllerClass(String modelClassName){
+		String pkg = PropertiesUtil.get("package");
+		String pathFile = PropertiesUtil.get("java_outpath");
+		String path = (pathFile + pkg + ".restcontroller").replaceAll("\\.", "\\\\");
+		
+		System.out.println(path);
+		
+		PackageUtil.ifPackageNotExistCreate(path);
+		
+		System.out.println(path+ File.separator+ modelClassName + "Controller.java");
+		File file = new File(path+ File.separator+ modelClassName + "Controller.java");
+		try {
+			file.createNewFile();
+			String content = FileUtils.readFileToString(
+					new File(CodeUtil.class.getResource("/vm").getFile() + "/restcontroller"));
+			content = content.replaceAll("\\$thisPackage", PackageUtil.getPackage()+".controller");
+			content = content.replaceAll("\\$modelClass", PackageUtil.getModelClass(modelClassName));
+			content = content.replaceAll("\\$thisClassName", modelClassName+"Service");
+			content = content.replaceAll("\\$modelName", modelClassName);
+			content = content.replaceAll("\\$modelObj", modelClassName.toLowerCase());
+			
+			content = content.replaceAll("\\$serviceClass", PackageUtil.getServiceClass(modelClassName));
+			String serviceName = modelClassName+"Service";
+			content = content.replaceAll("\\$serviceName", serviceName);
+			content = content.replaceAll("\\$serviceObj", serviceName.toLowerCase());
+			content = content.replaceAll("\\$package", pkg);
+			FileUtils.writeStringToFile(file, content);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+	
 	public void genControllerClass(String modelClassName){
 		String pkg = PropertiesUtil.get("package");
 		String pathFile = PropertiesUtil.get("java_outpath");

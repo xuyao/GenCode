@@ -1,0 +1,75 @@
+package $thisPackage;
+
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import $modelClass;
+import $serviceClass;
+import $package.base.http.HttpResponse;
+import $package.base.http.BaseResponse;
+import $package.base.http.ListResponse;
+import $package.base.http.Status;
+import $package.base.http.ApiCode;
+import $package.base.http.Page;
+import $package.util.JsonUtil;
+
+/**
+ * 	@author xuyao
+ * */
+@Controller
+@RequestMapping("/fw/$modelObj")
+public class $modelNameController extends BaseController{
+	
+	@Autowired
+	private $serviceName $serviceObj;
+	
+	@RequestMapping(value = "/list", method = {RequestMethod.GET,RequestMethod.POST})
+	public void list(Page page, HttpServletRequest request, HttpServletResponse response) {
+		ListResponse<$modelName> ares = new ListResponse<$modelName>();
+		$modelName $modelObj = new $modelName();
+		List<$modelName> list = $serviceObj.list($modelObj);
+		ares.setRows(list);
+		ares.setTotal(1);
+		HttpResponse.responseContentTypeJson(response, JsonUtil.getJsonString4JavaPOJO(ares));
+	}
+	
+	
+	@RequestMapping(value = "/add", method = RequestMethod.POST)
+	public void add($modelName $modelObj, HttpServletRequest request, HttpServletResponse response) {
+		BaseResponse res = new BaseResponse();
+		$serviceObj.save($modelObj);
+		res.setStatus(new Status(ApiCode.CODE_SUCCESS, ApiCode.MSG_SUCCESS));
+		HttpResponse.responseContentTypeJson(response, JsonUtil.getJsonString4JavaPOJO(res));
+	}
+
+
+	@RequestMapping(value = "/delete", method = RequestMethod.POST)
+	public void delete(HttpServletRequest request, HttpServletResponse response) {
+		BaseResponse res = new BaseResponse();
+		String _id = request.getParameter("_id");
+		$modelName $modelObj = new $modelName();
+		$modelObj.setId(Integer.parseInt(_id));
+		$serviceObj.delete($modelObj);
+		res.setStatus(new Status(ApiCode.CODE_SUCCESS, ApiCode.MSG_SUCCESS));
+		HttpResponse.responseContentTypeJson(response, JsonUtil.getJsonString4JavaPOJO(res));
+	}
+	
+	
+	@RequestMapping(value = "/update", method = RequestMethod.POST)
+	public void update($modelName $modelObj, HttpServletRequest request, HttpServletResponse response) {
+		BaseResponse res = new BaseResponse();
+		String _id = request.getParameter("_id");
+		//$modelObj.set_id(_id);
+		$serviceObj.update($modelObj);
+		res.setStatus(new Status(ApiCode.CODE_SUCCESS, ApiCode.MSG_SUCCESS));
+		HttpResponse.responseContentTypeJson(response, JsonUtil.getJsonString4JavaPOJO(res));
+	}
+	
+}

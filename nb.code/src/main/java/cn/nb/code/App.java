@@ -15,6 +15,7 @@ public class App {
 				code.genModelClass(modelClassName, obj.getList());//生成dao
 				code.genDaoClass(modelClassName);//生成dao
 				code.genServiceClass(modelClassName);//生成service
+				code.genRestControllerClass(modelClassName);//生成controller
 				code.genControllerClass(modelClassName);//生成controller
 				code.genMybatisXml(modelClassName, obj.getList());//生成mybatis配置文件
 			}

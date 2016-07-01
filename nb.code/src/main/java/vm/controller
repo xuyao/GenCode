@@ -1,76 +1,275 @@
 package $thisPackage;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 
 import $modelClass;
 import $serviceClass;
-import $package.base.http.HttpResponse;
-import $package.base.http.BaseResponse;
-import $package.base.http.ListResponse;
-import $package.base.http.Status;
-import $package.base.http.ApiCode;
-import $package.base.http.Page;
+import $package.util.ConstantsUtil;
+import $package.util.ConstsUtil;
+import $package.util.FreemarkerStaticHtml;
+import $package.util.HttpResponse;
 import $package.util.JsonUtil;
-import $package.base.http.BaseController;
+import $package.util.Tools;
+import $package.web.vo.JsonResult;
 
 /**
- * 	@author xuyao
- * */
+ *	$modelNameController
+ *	@author xuyao
+ *
+ */
 @Controller
-@RequestMapping("/fw/$modelObj")
+@RequestMapping(value="/$modelObj")
 public class $modelNameController extends BaseController{
-	
+
 	@Autowired
 	private $serviceName $serviceObj;
 	
-	@RequestMapping(value = "/list", method = RequestMethod.GET)
-	public void list(Page page, HttpServletRequest request, HttpServletResponse response) {
-		ListResponse<$modelName> ares = new ListResponse<$modelName>();
-		$modelName $modelObj = new $modelName();
-		List<$modelName> list = $serviceObj.list($modelObj);
-		ares.setRows(list);
-		ares.setTotal(1);
-		HttpResponse.responseContentTypeJson(response, JsonUtil.getJsonString4JavaPOJO(ares));
+	private static final String TO_ADD_JSP = "redirect:/news/toadd.jspa";
+	private static final String TO_EDIT_JSP = "redirect:/news/toedit.jspa";
+	private static final String TO_LIST_JSP = "redirect:/news/list.jspa";
+	private static final String BASE_VIEW_NAME = "$modelObj/";
+	
+	private static final String TEMPLATE_DIRECTORY = "/template/";
+	
+	/**
+	 * 
+	 * @Title: list 
+	 * @param request
+	 * @param response
+	 * @return 
+	 * 
+	 * @throws
+	 */
+	@RequestMapping(value = "/list", method = {RequestMethod.POST,RequestMethod.GET})
+	public ModelAndView list(HttpServletRequest request, 
+			HttpServletResponse response) {
+		ModelAndView mav = new ModelAndView();
+		mav.addObject(WEB_MESSAGE_KEY,request.getParameter(WEB_MESSAGE_KEY));
+		String title = request.getParameter("title");
+		String pageNoStr = request.getParameter("pageNo");
+		if(StringUtils.isNotBlank(pageNoStr)){
+			pageNo = Tools.parseInt(pageNoStr);
+		}
+		$modelName ss = new $modelName();
+		ss.setTitle(title);
+		count = $serviceObj.count(ss);
+		int beginIndex = pageCount(count);
+		List<$modelName> list = $serviceObj.list(ss);
+		mav.addObject("pageNo",pageNo);
+		mav.addObject("pageSize", pageSize);
+		mav.addObject("count", count);
+		mav.addObject("title", title);
+		mav.addObject("list",list);
+		mav.setViewName(BASE_VIEW_NAME+"list");
+		return mav;
+
 	}
 	
-	
+	/**
+	 * 
+	 * @Title: toAdd 
+	 * @param request
+	 * @param response
+	 * @return 
+	 * 
+	 * @throws
+	 */
+	@RequestMapping(value = "/toadd", method = {RequestMethod.GET})
+	public ModelAndView toAdd(HttpServletRequest request, 
+			HttpServletResponse response) {
+		ModelAndView mv = new ModelAndView();
+		mv.addObject(WEB_MESSAGE_KEY,request.getParameter(WEB_MESSAGE_KEY));
+		mv.setViewName(BASE_VIEW_NAME+"add");
+		return mv;
+	}
+
+	/**
+	 * 
+	 * @Title: add 
+	 * @param request
+	 * @param response
+	 * @param attach
+	 * @return 
+	 * 
+	 * @throws
+	 */
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
-	public void add($modelName $modelObj, HttpServletRequest request, HttpServletResponse response) {
-		BaseResponse res = new BaseResponse();
-		$serviceObj.save($modelObj);
-		res.setStatus(new Status(ApiCode.CODE_SUCCESS, ApiCode.MSG_SUCCESS));
-		HttpResponse.responseContentTypeJson(response, JsonUtil.getJsonString4JavaPOJO(res));
-	}
+	public ModelAndView add(HttpServletRequest request,HttpServletResponse response) {
+		ModelMap mmap = new ModelMap();
+		String title = request.getParameter("title");
+		String time = request.getParameter("time");
+		String content = request.getParameter("content");
 
-
-	@RequestMapping(value = "/delete", method = RequestMethod.POST)
-	public void delete(HttpServletRequest request, HttpServletResponse response) {
-		BaseResponse res = new BaseResponse();
-		String _id = request.getParameter("_id");
-		$modelName $modelObj = new $modelName();
-		$modelObj.setId(Integer.parseInt(_id));
-		$serviceObj.delete($modelObj);
-		res.setStatus(new Status(ApiCode.CODE_SUCCESS, ApiCode.MSG_SUCCESS));
-		HttpResponse.responseContentTypeJson(response, JsonUtil.getJsonString4JavaPOJO(res));
+		$modelName ss = new $modelName();
+		if(StringUtils.isNotBlank(title) && title.trim().length()>40){
+			mmap.addAttribute(WEB_MESSAGE_KEY, ConstantsUtil.MSG_CODE_CONTENT_TOO_LONG);
+			return new ModelAndView(TO_ADD_JSP,mmap);
+		}
+		if(StringUtils.isNotBlank(content) && content.trim().length()>1024){
+			mmap.addAttribute(WEB_MESSAGE_KEY, ConstantsUtil.MSG_CODE_CONTENT_TOO_LONG);
+			return new ModelAndView(TO_ADD_JSP,mmap);
+		}
+		ss.setTitle(title);
+		ss.setTime(time);
+		ss.setContent(content);
+		$serviceObj.save(ss);
+		return new ModelAndView(TO_LIST_JSP,mmap);
 	}
 	
+	/**
+	 * 
+	 * @Title: toEdit 
+	 * @param request
+	 * @param response
+	 * @param id
+	 * @return 
+	 * 
+	 * @throws
+	 */
+	@RequestMapping(value = "/toedit", method = {RequestMethod.GET})
+	public ModelAndView toEdit(HttpServletRequest request, 
+			HttpServletResponse response,@RequestParam("id") Integer id) {
+		ModelAndView mv = new ModelAndView();
+		$modelName ss = new $modelName();
+		ss.setId(id);
+		if(id!=null){
+			ss = $serviceObj.get(ss);
+			mv.addObject("obj", ss);
+		}
+		mv.addObject(WEB_MESSAGE_KEY,request.getParameter(WEB_MESSAGE_KEY));
+		mv.setViewName(BASE_VIEW_NAME+"edit");
+		return mv;
+
+	}
 	
-	@RequestMapping(value = "/update", method = RequestMethod.POST)
-	public void update($modelName $modelObj, HttpServletRequest request, HttpServletResponse response) {
-		BaseResponse res = new BaseResponse();
-		String _id = request.getParameter("_id");
-		//$modelObj.set_id(_id);
-		$serviceObj.update($modelObj);
-		res.setStatus(new Status(ApiCode.CODE_SUCCESS, ApiCode.MSG_SUCCESS));
-		HttpResponse.responseContentTypeJson(response, JsonUtil.getJsonString4JavaPOJO(res));
+	/**
+	 * 
+	 * @Title: edit 
+	 * @param request
+	 * @param response
+	 * @param id
+	 * @param attach
+	 * @return 
+	 * 
+	 * @throws
+	 */
+	@RequestMapping(value = "/edit", method = RequestMethod.POST)
+	public ModelAndView edit(HttpServletRequest request,HttpServletResponse response,
+			@RequestParam("id") Integer id) {
+		ModelMap mmap = new ModelMap();
+		String title = request.getParameter("title");
+		String time = request.getParameter("time");
+		String content = request.getParameter("content");
+		
+		if(StringUtils.isBlank(title)){
+			mmap.addAttribute(WEB_MESSAGE_KEY, ConstantsUtil.MSG_CODE_OPR_PARAM_REQUIRED);
+			mmap.addAttribute("id", id);
+			return new ModelAndView(TO_EDIT_JSP,mmap);
+		}
+		
+		if(title.trim().length()>200){
+			mmap.addAttribute(WEB_MESSAGE_KEY, ConstantsUtil.MSG_CODE_CONTENT_TOO_LONG);
+			mmap.addAttribute("id", id);
+			return new ModelAndView(TO_EDIT_JSP,mmap);
+		}
+		if(id!=null){
+			$modelName ss = new $modelName();
+			ss.setId(id);
+			ss = $serviceObj.get(ss);
+			ss.setTitle(title);
+			ss.setTime(time);
+			ss.setContent(content);
+			$serviceObj.update(ss);
+			mmap.addAttribute(WEB_MESSAGE_KEY, ConstantsUtil.MSG_CODE_OPR_SUCCESS);
+		}
+		return new ModelAndView(TO_LIST_JSP,mmap);
+	}
+	
+	/**
+	 * 
+	 * @Title: delete 
+	 * @param id
+	 * @param request
+	 * @param response
+	 * @return 
+	 * 
+	 * @throws
+	 */
+	@RequestMapping(value = "/delete", method = {RequestMethod.GET})
+	public ModelAndView delete(@RequestParam("id") Integer id,HttpServletRequest request, 
+			HttpServletResponse response) {
+		$modelName ss = new $modelName();
+		ss.setId(id);
+		$serviceObj.delete(ss);
+		ModelMap mmap = new ModelMap();
+		mmap.addAttribute(WEB_MESSAGE_KEY,ConstantsUtil.MSG_CODE_OPR_SUCCESS);
+		ModelAndView mav = new ModelAndView(TO_LIST_JSP,mmap);
+		return mav;
+
+	}
+	
+	/**
+	 * 
+	 * @Title: changeSort 
+	 * @param id
+	 * @param request
+	 * @param response 
+	 * 
+	 * @throws
+	 */
+	@RequestMapping(value="/changeSort",method = RequestMethod.POST)
+	public void changeSort(@RequestParam("id") Integer id,HttpServletRequest request,HttpServletResponse response){
+		JsonResult jr = new JsonResult();
+		jr.setResult(false);
+		String sort = request.getParameter("sort");
+		if(StringUtils.isBlank(sort) || !Tools.isNumeric(sort)){
+			jr.setMessage("sort is not empty! and muset be number!");
+		}else{
+			try {
+				$modelName ss = new $modelName();
+				ss.setId(id);
+				ss = $serviceObj.get(ss);
+				ss.setSort(Tools.parseInt(sort));
+				$serviceObj.update(ss);
+				jr.setResult(true);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		HttpResponse.responseTextHtml(response, JsonUtil.getJsonString4JavaPOJO(jr));
+	}
+	
+	//ajax fragment static 
+	@RequestMapping(value = "/genhtml", method = RequestMethod.POST)
+	public void genhtml(HttpServletRequest request, HttpServletResponse response) {
+		$modelName ss = new $modelName();
+		List<$modelName> ll = $serviceObj.list(ss);
+		Map<String,Object> dataMap = new HashMap<String,Object>();
+		dataMap.put("ll", ll);
+		dataMap.put("path", ConstsUtil.prop.get("static_url"));
+	
+		String outputHtml = FreemarkerStaticHtml.generate("news.tl", dataMap,
+				Tools.getAbsolutePath()+TEMPLATE_DIRECTORY);
+		String htmlPath = "news.html";
+		Tools.stringToFile(outputHtml, ConstsUtil.prop.get("static_html_path")+htmlPath);
+		if(outputHtml==null)
+			return ;
+		Tools.stringToFile(outputHtml, ConstsUtil.prop.get("static_html_path")+htmlPath);
+		HttpResponse.responseTextPlain(response, "sccuess!");
 	}
 	
 }
