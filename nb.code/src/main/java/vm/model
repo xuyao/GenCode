@@ -1,6 +1,6 @@
 package $thisPackage;
 
-public class $modelName {
+public class $modelName extends BaseModel{
 
 	$param
 	
