@@ -64,11 +64,11 @@ public class $modelNameController extends BaseController{
 		if(StringUtils.isNotBlank(pageNoStr)){
 			pageNo = Tools.parseInt(pageNoStr);
 		}
-		$modelName ss = new $modelName();
-		ss.setTitle(title);
-		count = $serviceObj.count(ss);
+		$modelName obj = new $modelName();
+		obj.setTitle(title);
+		count = $serviceObj.count(obj);
 		int beginIndex = pageCount(count);
-		List<$modelName> list = $serviceObj.list(ss);
+		List<$modelName> list = $serviceObj.list(obj);
 		mav.addObject("pageNo",pageNo);
 		mav.addObject("pageSize", pageSize);
 		mav.addObject("count", count);
@@ -114,7 +114,7 @@ public class $modelNameController extends BaseController{
 		String time = request.getParameter("time");
 		String content = request.getParameter("content");
 
-		$modelName ss = new $modelName();
+		$modelName obj = new $modelName();
 		if(StringUtils.isNotBlank(title) && title.trim().length()>40){
 			mmap.addAttribute(WEB_MESSAGE_KEY, ConstantsUtil.MSG_CODE_CONTENT_TOO_LONG);
 			return new ModelAndView(TO_ADD_JSP,mmap);
@@ -123,10 +123,10 @@ public class $modelNameController extends BaseController{
 			mmap.addAttribute(WEB_MESSAGE_KEY, ConstantsUtil.MSG_CODE_CONTENT_TOO_LONG);
 			return new ModelAndView(TO_ADD_JSP,mmap);
 		}
-		ss.setTitle(title);
-		ss.setTime(time);
-		ss.setContent(content);
-		$serviceObj.save(ss);
+		obj.setTitle(title);
+		obj.setTime(time);
+		obj.setContent(content);
+		$serviceObj.save(obj);
 		return new ModelAndView(TO_LIST_JSP,mmap);
 	}
 	
@@ -144,11 +144,11 @@ public class $modelNameController extends BaseController{
 	public ModelAndView toEdit(HttpServletRequest request, 
 			HttpServletResponse response,@RequestParam("id") Integer id) {
 		ModelAndView mv = new ModelAndView();
-		$modelName ss = new $modelName();
-		ss.setId(id);
+		$modelName obj = new $modelName();
+		obj.setId(id);
 		if(id!=null){
-			ss = $serviceObj.get(ss);
-			mv.addObject("obj", ss);
+			obj = $serviceObj.get(obj);
+			mv.addObject("obj", obj);
 		}
 		mv.addObject(WEB_MESSAGE_KEY,request.getParameter(WEB_MESSAGE_KEY));
 		mv.setViewName(BASE_VIEW_NAME+"edit");
@@ -187,13 +187,13 @@ public class $modelNameController extends BaseController{
 			return new ModelAndView(TO_EDIT_JSP,mmap);
 		}
 		if(id!=null){
-			$modelName ss = new $modelName();
-			ss.setId(id);
-			ss = $serviceObj.get(ss);
-			ss.setTitle(title);
-			ss.setTime(time);
-			ss.setContent(content);
-			$serviceObj.update(ss);
+			$modelName obj = new $modelName();
+			obj.setId(id);
+			obj = $serviceObj.get(obj);
+			obj.setTitle(title);
+			obj.setTime(time);
+			obj.setContent(content);
+			$serviceObj.update(obj);
 			mmap.addAttribute(WEB_MESSAGE_KEY, ConstantsUtil.MSG_CODE_OPR_SUCCESS);
 		}
 		return new ModelAndView(TO_LIST_JSP,mmap);
@@ -212,9 +212,9 @@ public class $modelNameController extends BaseController{
 	@RequestMapping(value = "/delete", method = {RequestMethod.GET})
 	public ModelAndView delete(@RequestParam("id") Integer id,HttpServletRequest request, 
 			HttpServletResponse response) {
-		$modelName ss = new $modelName();
-		ss.setId(id);
-		$serviceObj.delete(ss);
+		$modelName obj = new $modelName();
+		obj.setId(id);
+		$serviceObj.delete(obj);
 		ModelMap mmap = new ModelMap();
 		mmap.addAttribute(WEB_MESSAGE_KEY,ConstantsUtil.MSG_CODE_OPR_SUCCESS);
 		ModelAndView mav = new ModelAndView(TO_LIST_JSP,mmap);
@@ -240,11 +240,11 @@ public class $modelNameController extends BaseController{
 			jr.setMessage("sort is not empty! and muset be number!");
 		}else{
 			try {
-				$modelName ss = new $modelName();
-				ss.setId(id);
-				ss = $serviceObj.get(ss);
-				ss.setSort(Tools.parseInt(sort));
-				$serviceObj.update(ss);
+				$modelName obj = new $modelName();
+				obj.setId(id);
+				obj = $serviceObj.get(obj);
+				obj.setSort(Tools.parseInt(sort));
+				$serviceObj.update(obj);
 				jr.setResult(true);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -256,8 +256,8 @@ public class $modelNameController extends BaseController{
 	//ajax fragment static 
 	@RequestMapping(value = "/genhtml", method = RequestMethod.POST)
 	public void genhtml(HttpServletRequest request, HttpServletResponse response) {
-		$modelName ss = new $modelName();
-		List<$modelName> ll = $serviceObj.list(ss);
+		$modelName obj = new $modelName();
+		List<$modelName> ll = $serviceObj.list(obj);
 		Map<String,Object> dataMap = new HashMap<String,Object>();
 		dataMap.put("ll", ll);
 		dataMap.put("path", ConstsUtil.prop.get("static_url"));
