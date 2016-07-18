@@ -38,9 +38,9 @@ public class $modelNameController extends BaseController{
 	@Autowired
 	private $serviceName $serviceObj;
 	
-	private static final String TO_ADD_JSP = "redirect:/news/toadd.jspa";
-	private static final String TO_EDIT_JSP = "redirect:/news/toedit.jspa";
-	private static final String TO_LIST_JSP = "redirect:/news/list.jspa";
+	private static final String TO_ADD_JSP = "redirect:/$modelObj/toadd.jspa";
+	private static final String TO_EDIT_JSP = "redirect:/$modelObj/toedit.jspa";
+	private static final String TO_LIST_JSP = "redirect:/$modelObj/list.jspa";
 	private static final String BASE_VIEW_NAME = "$modelObj/";
 	
 	private static final String TEMPLATE_DIRECTORY = "/template/";
