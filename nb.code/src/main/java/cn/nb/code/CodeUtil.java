@@ -166,7 +166,7 @@ public class CodeUtil {
 	}
 	
 	
-	public void genMybatisXml(String modelClassName, List<String> list){
+	public void genMybatisXml(String modelClassName, List<String> list, String tmplate){
 		String path = PropertiesUtil.get("mybatis_outpath")
 				+ "mybatis" + File.separator + "mapper" + File.separator;
 		
@@ -178,7 +178,7 @@ public class CodeUtil {
 			xmlFile.createNewFile();
 		
 		String content = FileUtils.readFileToString(
-				new File(CodeUtil.class.getResource("/vm").getFile() + "/sqlmap"));
+				new File(CodeUtil.class.getResource("/vm").getFile() + "/"+tmplate));
 		content = content.replaceAll("\\$daoClass", PackageUtil.getDaoClass(modelClassName));
 		content = content.replaceAll("\\$modelName", modelClassName);
 		content = content.replaceAll("\\$modelObj", modelClassName.toLowerCase());
