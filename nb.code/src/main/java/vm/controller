@@ -108,25 +108,11 @@ public class $modelNameController extends BaseController{
 	 * @throws
 	 */
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
-	public ModelAndView add(HttpServletRequest request,HttpServletResponse response) {
+	public ModelAndView add($modelName $modelObj,
+			HttpServletRequest request,HttpServletResponse response) {
 		ModelMap mmap = new ModelMap();
-		String title = request.getParameter("title");
-		String time = request.getParameter("time");
-		String content = request.getParameter("content");
-
-		$modelName obj = new $modelName();
-		if(StringUtils.isNotBlank(title) && title.trim().length()>40){
-			mmap.addAttribute(WEB_MESSAGE_KEY, ConstantsUtil.MSG_CODE_CONTENT_TOO_LONG);
-			return new ModelAndView(TO_ADD_JSP,mmap);
-		}
-		if(StringUtils.isNotBlank(content) && content.trim().length()>1024){
-			mmap.addAttribute(WEB_MESSAGE_KEY, ConstantsUtil.MSG_CODE_CONTENT_TOO_LONG);
-			return new ModelAndView(TO_ADD_JSP,mmap);
-		}
-		obj.setTitle(title);
-		obj.setTime(time);
-		obj.setContent(content);
-		$serviceObj.save(obj);
+		$serviceObj.save($modelObj);
+		mmap.addAttribute(WEB_MESSAGE_KEY, ConstantsUtil.MSG_CODE_OPR_SUCCESS);
 		return new ModelAndView(TO_LIST_JSP,mmap);
 	}
 	
@@ -168,34 +154,11 @@ public class $modelNameController extends BaseController{
 	 * @throws
 	 */
 	@RequestMapping(value = "/edit", method = RequestMethod.POST)
-	public ModelAndView edit(HttpServletRequest request,HttpServletResponse response,
-			@RequestParam("id") Integer id) {
+	public ModelAndView edit($modelName $modelObj, HttpServletRequest request,
+					HttpServletResponse response) {
 		ModelMap mmap = new ModelMap();
-		String title = request.getParameter("title");
-		String time = request.getParameter("time");
-		String content = request.getParameter("content");
-		
-		if(StringUtils.isBlank(title)){
-			mmap.addAttribute(WEB_MESSAGE_KEY, ConstantsUtil.MSG_CODE_OPR_PARAM_REQUIRED);
-			mmap.addAttribute("id", id);
-			return new ModelAndView(TO_EDIT_JSP,mmap);
-		}
-		
-		if(title.trim().length()>200){
-			mmap.addAttribute(WEB_MESSAGE_KEY, ConstantsUtil.MSG_CODE_CONTENT_TOO_LONG);
-			mmap.addAttribute("id", id);
-			return new ModelAndView(TO_EDIT_JSP,mmap);
-		}
-		if(id!=null){
-			$modelName obj = new $modelName();
-			obj.setId(id);
-			obj = $serviceObj.get(obj);
-			obj.setTitle(title);
-			obj.setTime(time);
-			obj.setContent(content);
-			$serviceObj.update(obj);
-			mmap.addAttribute(WEB_MESSAGE_KEY, ConstantsUtil.MSG_CODE_OPR_SUCCESS);
-		}
+		$serviceObj.update(modelObj);
+		mmap.addAttribute(WEB_MESSAGE_KEY, ConstantsUtil.MSG_CODE_OPR_SUCCESS);
 		return new ModelAndView(TO_LIST_JSP,mmap);
 	}
 	

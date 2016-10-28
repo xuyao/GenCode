@@ -8,6 +8,8 @@ public class App {
 		try {
 			List<TableObj> list = new DBUtil().getDBColumnList();
 			CodeUtil code = new CodeUtil();
+			String dbtype = PropertiesUtil.get("database.type");
+			
 			for(TableObj obj : list){
 				
 				String modelClassName = CharUpDownUtil.
@@ -17,7 +19,15 @@ public class App {
 				code.genServiceClass(modelClassName);//生成service
 				code.genRestControllerClass(modelClassName);//生成controller
 				code.genControllerClass(modelClassName);//生成controller
-				code.genMybatisXml(modelClassName, obj.getList());//生成mybatis配置文件
+				
+				if("mysql".equalsIgnoreCase(dbtype)){
+					code.genMybatisXml(modelClassName, obj.getList(), "sqlmap_mysql");//mysql生成mybatis配置文件
+				}else if("oracle".equalsIgnoreCase(dbtype)){
+					code.genMybatisXml(modelClassName, obj.getList(), "sqlmap_oracle");//oracle生成mybatis配置文件
+				}else{
+					//
+				}
+				
 			}
 			
 		} catch (Exception e) {
