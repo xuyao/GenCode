@@ -157,7 +157,7 @@ public class $modelNameController extends BaseController{
 	public ModelAndView edit($modelName $modelObj, HttpServletRequest request,
 					HttpServletResponse response) {
 		ModelMap mmap = new ModelMap();
-		$serviceObj.update(modelObj);
+		$serviceObj.update($modelObj);
 		mmap.addAttribute(WEB_MESSAGE_KEY, ConstantsUtil.MSG_CODE_OPR_SUCCESS);
 		return new ModelAndView(TO_LIST_JSP,mmap);
 	}
@@ -172,7 +172,7 @@ public class $modelNameController extends BaseController{
 	 * 
 	 * @throws
 	 */
-	@RequestMapping(value = "/delete", method = {RequestMethod.GET})
+	@RequestMapping(value = "/del", method = {RequestMethod.GET})
 	public ModelAndView delete(@RequestParam("id") Integer id,HttpServletRequest request, 
 			HttpServletResponse response) {
 		$modelName obj = new $modelName();
@@ -206,7 +206,7 @@ public class $modelNameController extends BaseController{
 				$modelName obj = new $modelName();
 				obj.setId(id);
 				obj = $serviceObj.get(obj);
-				obj.setSort(Tools.parseInt(sort));
+//				obj.setSort(Tools.parseInt(sort));
 				$serviceObj.update(obj);
 				jr.setResult(true);
 			} catch (Exception e) {
