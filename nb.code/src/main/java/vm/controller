@@ -65,6 +65,9 @@ public class $modelNameController extends BaseController{
 		}
 		count = $serviceObj.count($modelObj);
 		int beginIndex = pageCount(count);
+		$modelObj.setPage(true);
+		$modelObj.setCount(count);
+		$modelObj.setStart(beginIndex);
 		List<$modelName> list = $serviceObj.list($modelObj);
 		mav.addObject("pageNo",pageNo);
 		mav.addObject("pageSize", pageSize);
