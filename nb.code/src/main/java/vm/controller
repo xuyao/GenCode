@@ -172,7 +172,7 @@ public class $modelNameController extends BaseController{
 	 * @throws
 	 */
 	@RequestMapping(value = "/del", method = {RequestMethod.GET})
-	public ModelAndView delete(@RequestParam("id") Integer id,HttpServletRequest request, 
+	public ModelAndView delete(@RequestParam("id") Integer id, HttpServletRequest request, 
 			HttpServletResponse response) {
 		$modelName obj = new $modelName();
 		obj.setId(id);
@@ -194,7 +194,8 @@ public class $modelNameController extends BaseController{
 	 * @throws
 	 */
 	@RequestMapping(value="/changeSort",method = RequestMethod.POST)
-	public void changeSort(@RequestParam("id") Integer id,HttpServletRequest request,HttpServletResponse response){
+	public void changeSort(@RequestParam("id") Integer id, HttpServletRequest request, 
+				HttpServletResponse response){
 		JsonResult jr = new JsonResult();
 		jr.setResult(false);
 		String sort = request.getParameter("sort");
@@ -222,14 +223,13 @@ public class $modelNameController extends BaseController{
 		List<$modelName> ll = $serviceObj.list(obj);
 		Map<String,Object> dataMap = new HashMap<String,Object>();
 		dataMap.put("ll", ll);
-		dataMap.put("path", ConstsUtil.prop.get("static_url"));
 	
-		String outputHtml = FreemarkerStaticHtml.generate("news.tl", dataMap,
+		String outputHtml = FreemarkerStaticHtml.generate("$modelObj.tl", dataMap,
 				Tools.getAbsolutePath()+TEMPLATE_DIRECTORY);
-		String htmlPath = "news.html";
+		String htmlPath = "$modelObj.html";
 		if(outputHtml==null)
 			return ;
-		Tools.stringToFile(outputHtml, ConstsUtil.prop.get("static_html_path")+htmlPath);
+		Tools.stringToFile(outputHtml, PathUtil.getFileColumnNYRPath("$modelObj")+htmlPath);
 		HttpResponse.responseTextPlain(response, "sccuess!");
 	}
 	
