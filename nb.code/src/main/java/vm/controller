@@ -55,7 +55,7 @@ public class $modelNameController extends BaseController{
 	 * @throws
 	 */
 	@RequestMapping(value = "/list", method = {RequestMethod.POST,RequestMethod.GET})
-	public ModelAndView list(HttpServletRequest request, 
+	public ModelAndView list($modelName $modelObj, HttpServletRequest request, 
 			HttpServletResponse response) {
 		ModelAndView mav = new ModelAndView();
 		mav.addObject(WEB_MESSAGE_KEY,request.getParameter(WEB_MESSAGE_KEY));
