@@ -59,16 +59,13 @@ public class $modelNameController extends BaseController{
 			HttpServletResponse response) {
 		ModelAndView mav = new ModelAndView();
 		mav.addObject(WEB_MESSAGE_KEY,request.getParameter(WEB_MESSAGE_KEY));
-		String title = request.getParameter("title");
 		String pageNoStr = request.getParameter("pageNo");
 		if(StringUtils.isNotBlank(pageNoStr)){
 			pageNo = Tools.parseInt(pageNoStr);
 		}
-		$modelName obj = new $modelName();
-//		obj.setTitle(title);
-		count = $serviceObj.count(obj);
+		count = $serviceObj.count($modelObj);
 		int beginIndex = pageCount(count);
-		List<$modelName> list = $serviceObj.list(obj);
+		List<$modelName> list = $serviceObj.list($modelObj);
 		mav.addObject("pageNo",pageNo);
 		mav.addObject("pageSize", pageSize);
 		mav.addObject("count", count);
