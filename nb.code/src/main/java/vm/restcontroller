@@ -31,9 +31,8 @@ public class $modelNameController extends BaseController{
 	private $serviceName $serviceObj;
 	
 	@RequestMapping(value = "/list", method = {RequestMethod.GET,RequestMethod.POST})
-	public void list(Page page, HttpServletRequest request, HttpServletResponse response) {
+	public void list($modelName $modelObj, HttpServletRequest request, HttpServletResponse response) {
 		ListResponse<$modelName> ares = new ListResponse<$modelName>();
-		$modelName $modelObj = new $modelName();
 		List<$modelName> list = $serviceObj.list($modelObj);
 		ares.setRows(list);
 		ares.setTotal(1);

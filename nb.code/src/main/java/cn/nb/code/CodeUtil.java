@@ -223,6 +223,7 @@ public class CodeUtil {
 			.append(arr[0]).append(" != ''\">").append("\n\t\t").append("and t.").append(arr[0])
 			.append("=#{").append(arr[0]).append("}").append("\n\t").append("</if>").append("\n\t");
 		}
+		sb.append("	order by t.ctime desc\n\t");
 		return sb.toString();
 	}
 	
